@@ -1,5 +1,5 @@
 
-// relay-screens-2.jsx — Additional screens (9–15) for Relay
+// relay-screens-2.jsx — Additional screens (9–15) for Gateway
 
 // ─── SCREEN 9: AI MATCHING ANIMATION ─────────────────────────
 function ScreenMatching({ navigate, lang }) {
@@ -35,7 +35,7 @@ function ScreenMatching({ navigate, lang }) {
       direction: isRTL ? 'rtl' : 'ltr',
     }}>
       {/* Logo */}
-      <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, color: '#fff', marginBottom: 40 }}>Relay</div>
+      <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, color: '#fff', marginBottom: 40 }}>Gateway</div>
 
       {phase === 0 ? (
         <>
@@ -663,7 +663,7 @@ function ScreenSettings({ navigate, lang, setLang }) {
           🚪 {isRTL ? 'تسجيل الخروج' : 'Se déconnecter'}
         </button>
 
-        <div style={{ ...T.small, textAlign: 'center', fontSize: 11 }}>Relay v1.0.0 · INPT 2026</div>
+        <div style={{ ...T.small, textAlign: 'center', fontSize: 11 }}>Gateway v1.0.0 · INPT 2026</div>
       </div>
     </div>
   );
