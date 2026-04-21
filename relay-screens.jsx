@@ -111,7 +111,15 @@ function ScreenOnboarding({ navigate, lang, setLang, role, setRole }) {
             appearance: 'none', boxSizing: 'border-box',
           }}>
             <option value="">{isRTL ? 'اختار الشعبة' : 'Sélectionner...'}</option>
-            {['Génie Logiciel', 'Réseaux & Télécoms', 'IA & Data Science', 'Cybersécurité', 'Cloud & DevOps'].map(f => (
+            {[
+              'Cybersécurité et Confiance Numérique',
+              'Ingénierie des Systèmes Ubiquitaires et Distribués - Cloud et IoT',
+              "Ingénierie des Technologies de l’Information et de Communication Intelligentes (Smart ICT)",
+              'Ingénierie logicielle avancée pour les services numériques',
+              'Innovation et AMOA',
+              'Sciences de Données',
+              'Systèmes Embarqués et Services Numériques',
+            ].map(f => (
               <option key={f} value={f}>{f}</option>
             ))}
           </select>
