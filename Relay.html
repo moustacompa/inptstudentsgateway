@@ -35,7 +35,7 @@
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "lang": "FR",
-  "startScreen": "onboarding"
+  "startScreen": "auth"
 }/*EDITMODE-END*/;
 
 // ── Bottom Nav — adapté au rôle ───────────────────────────────
@@ -56,7 +56,7 @@ function AppBottomNav({ tab, setTab, navigate, role }) {
     admin: [
       { id: 'home',          label: 'Tableau de bord', screen: 'home',          icon: a => ic(a, <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></>) },
       { id: 'tickets',       label: 'Tickets',         screen: 'tickets',       icon: a => ic(a, <><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></>) },
-      { id: 'notifications', label: 'Alertes',          screen: 'notifications', icon: a => ic(a, <><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></>) },
+      { id: 'users',         label: 'Utilisateurs',     screen: 'users',         icon: a => ic(a, <><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></>) },
       { id: 'settings',      label: 'Paramètres',       screen: 'settings',      icon: a => ic(a, <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></>) },
     ],
     mentor: [
@@ -93,7 +93,7 @@ function AppBottomNav({ tab, setTab, navigate, role }) {
 }
 
 // ── Screens that hide the bottom nav ─────────────────────────
-const NO_NAV_SCREENS = ['onboarding', 'matching', 'chat', 'submit', 'submitSuccess', 'ticketDetail', 'mentorProfile', 'settings'];
+const NO_NAV_SCREENS = ['auth', 'onboarding', 'matching', 'chat', 'submit', 'submitSuccess', 'ticketDetail', 'mentorProfile', 'settings'];
 
 // ── Full screen list for the pill nav ────────────────────────
 const SCREEN_GROUPS = [
@@ -109,32 +109,34 @@ const SCREEN_GROUPS = [
     screens: [
       { id: 'home',          label: '③ Accueil' },
       { id: 'notifications', label: '④ Notifications' },
+      { id: 'auth',          label: '⑤ Authentification' },
     ],
   },
   {
     label: 'Doléances',
     screens: [
-      { id: 'community',     label: '⑤ Campus Feed' },
-      { id: 'submit',        label: '⑥ Soumettre' },
-      { id: 'submitSuccess', label: '⑦ Confirmation' },
-      { id: 'tickets',       label: '⑧ Mes Tickets' },
-      { id: 'ticketDetail',  label: '⑨ Ticket Détail' },
+      { id: 'community',     label: '⑥ Campus Feed' },
+      { id: 'submit',        label: '⑦ Soumettre' },
+      { id: 'submitSuccess', label: '⑧ Confirmation' },
+      { id: 'tickets',       label: '⑨ Mes Tickets' },
+      { id: 'ticketDetail',  label: '⑩ Ticket Détail' },
     ],
   },
   {
     label: 'Mentors',
     screens: [
-      { id: 'mentors',       label: '⑩ Mentors' },
-      { id: 'mentorProfile', label: '⑪ Profil Mentor' },
-      { id: 'inbox',         label: '⑫ Messagerie' },
-      { id: 'chat',          label: '⑬ Conversation' },
+      { id: 'mentors',       label: '⑪ Mentors' },
+      { id: 'mentorProfile', label: '⑫ Profil Mentor' },
+      { id: 'inbox',         label: '⑬ Messagerie' },
+      { id: 'chat',          label: '⑭ Conversation' },
     ],
   },
   {
     label: 'Profil',
     screens: [
-      { id: 'profile',  label: '⑭ Mon Profil' },
-      { id: 'settings', label: '⑮ Paramètres' },
+      { id: 'profile',  label: '⑮ Mon Profil' },
+      { id: 'settings', label: '⑯ Paramètres' },
+      { id: 'users',    label: '⑰ Utilisateurs' },
     ],
   },
 ];
@@ -176,7 +178,7 @@ function AppTopBar({ onMenuOpen, role, lang }) {
 }
 
 // ── Side Drawer ───────────────────────────────────────────────
-function AppSideMenu({ open, onClose, navigate, role, setRole, lang }) {
+function AppSideMenu({ open, onClose, navigate, role, lang }) {
   const roleColors = { student: COLORS.accent, mentor: '#7C3AED', admin: COLORS.orange };
   const roleNames  = { student: 'Amine El Mansouri', mentor: 'Yasmine Benali', admin: 'Admin INPT' };
   const roleSubs   = { student: 'Étudiant · GL3', mentor: 'Mentor · Google', admin: 'Administration INPT' };
@@ -194,6 +196,7 @@ function AppSideMenu({ open, onClose, navigate, role, setRole, lang }) {
     admin: [
       { icon: '🏠', label: 'Tableau de bord',  screen: 'home' },
       { icon: '📋', label: 'Tous les tickets', screen: 'tickets' },
+      { icon: '👥', label: 'Utilisateurs',     screen: 'users' },
       { icon: '🔔', label: 'Alertes',          screen: 'notifications' },
       { icon: '📊', label: 'Campus Feed',      screen: 'community' },
     ],
@@ -282,29 +285,6 @@ function AppSideMenu({ open, onClose, navigate, role, setRole, lang }) {
             <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, fontWeight: 500, color: COLORS.gray900 }}>Paramètres</span>
           </button>
         </div>
-
-        {/* Footer — role switcher */}
-        <div style={{ padding: '14px 20px 32px', borderTop: `1px solid ${COLORS.gray200}` }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, color: COLORS.gray400, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-            Changer de rôle
-          </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            {[
-              { id: 'student', label: 'Étudiant', color: COLORS.accent },
-              { id: 'mentor',  label: 'Mentor',   color: '#7C3AED' },
-              { id: 'admin',   label: 'Admin',    color: COLORS.orange },
-            ].map(r => (
-              <button key={r.id} onClick={() => { setRole(r.id); navigate('home'); onClose(); }} style={{
-                flex: 1, padding: '7px 4px', borderRadius: 10,
-                border: `1.5px solid ${role === r.id ? r.color : COLORS.gray200}`,
-                background: role === r.id ? r.color + '15' : 'none',
-                color: role === r.id ? r.color : COLORS.gray600,
-                fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600,
-                cursor: 'pointer',
-              }}>{r.label}</button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -312,10 +292,21 @@ function AppSideMenu({ open, onClose, navigate, role, setRole, lang }) {
 
 // ── Main App ──────────────────────────────────────────────────
 function RelayApp() {
+  const readStoredSession = () => {
+    try {
+      const persistent = localStorage.getItem('gateway_session');
+      const temporary = sessionStorage.getItem('gateway_session');
+      return JSON.parse(persistent || temporary || 'null');
+    } catch (_) {
+      return null;
+    }
+  };
+
   const [screen, setScreen] = React.useState(() => localStorage.getItem('gateway_screen') || TWEAK_DEFAULTS.startScreen);
   const [tab, setTab]       = React.useState(() => localStorage.getItem('gateway_tab') || 'home');
   const [lang, setLang]     = React.useState(() => localStorage.getItem('gateway_lang') || TWEAK_DEFAULTS.lang);
   const [role, setRole]     = React.useState(() => localStorage.getItem('gateway_role') || 'student');
+  const [currentUser, setCurrentUser] = React.useState(() => readStoredSession());
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
   const [menuOpen, setMenuOpen]     = React.useState(false);
 
@@ -323,6 +314,29 @@ function RelayApp() {
   const handleTab = (t) => { setTab(t); localStorage.setItem('gateway_tab', t); };
   const handleLang = (l) => { setLang(l); localStorage.setItem('gateway_lang', l); };
   const handleRole = (r) => { setRole(r); localStorage.setItem('gateway_role', r); };
+  const handleLoginSuccess = (user, remember) => {
+    setCurrentUser(user);
+    handleRole(user.role);
+    const payload = JSON.stringify(user);
+    if (remember) {
+      localStorage.setItem('gateway_session', payload);
+      sessionStorage.removeItem('gateway_session');
+    } else {
+      sessionStorage.setItem('gateway_session', payload);
+      localStorage.removeItem('gateway_session');
+    }
+  };
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setMenuOpen(false);
+    setTab('home');
+    setRole('student');
+    localStorage.removeItem('gateway_session');
+    sessionStorage.removeItem('gateway_session');
+    localStorage.setItem('gateway_tab', 'home');
+    localStorage.setItem('gateway_role', 'student');
+    navigate('auth');
+  };
 
   // Tweaks protocol
   React.useEffect(() => {
@@ -335,12 +349,27 @@ function RelayApp() {
     return () => window.removeEventListener('message', handler);
   }, []);
 
+  React.useEffect(() => {
+    if (currentUser?.role && currentUser.role !== role) {
+      handleRole(currentUser.role);
+    }
+  }, [currentUser]);
+
   const showBottomNav = !NO_NAV_SCREENS.includes(screen);
 
-  const screenProps = { navigate, lang, setLang: handleLang, role, setRole: handleRole };
+  const screenProps = {
+    navigate, lang, setLang: handleLang, role, setRole: handleRole,
+    currentUser, onLoginSuccess: handleLoginSuccess, onLogout: handleLogout,
+  };
 
   const renderScreen = () => {
+    if (!currentUser && screen !== 'auth') {
+      return <ScreenAuthLive {...screenProps} />;
+    }
     switch (screen) {
+      case 'auth':          return currentUser
+        ? <ScreenHome {...screenProps} tab={tab} setTab={handleTab} />
+        : <ScreenAuthLive {...screenProps} />;
       case 'onboarding':    return <ScreenOnboarding    {...screenProps} />;
       case 'matching':      return <ScreenMatching       {...screenProps} />;
       case 'home':          return <ScreenHome           {...screenProps} tab={tab} setTab={handleTab} />;
@@ -356,6 +385,7 @@ function RelayApp() {
       case 'chat':          return <ScreenChat           {...screenProps} />;
       case 'profile':       return <ScreenProfile        {...screenProps} navigate={(s) => navigate(s)} />;
       case 'settings':      return <ScreenSettings       {...screenProps} />;
+      case 'users':         return <ScreenUserManagement {...screenProps} />;
       default:              return <ScreenHome           {...screenProps} tab={tab} setTab={handleTab} />;
     }
   };
@@ -419,7 +449,6 @@ function RelayApp() {
           onClose={() => setMenuOpen(false)}
           navigate={navigate}
           role={role}
-          setRole={handleRole}
           lang={lang}
         />
 
@@ -478,19 +507,6 @@ function RelayApp() {
           <div style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 14, marginBottom: 18 }}>Tweaks</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', display: 'block', marginBottom: 7, textTransform: 'uppercase', letterSpacing: 0.5 }}>Rôle</label>
-              <div style={{ display: 'flex', gap: 6 }}>
-                {[{id:'student',label:'Étudiant'},{id:'mentor',label:'Mentor'},{id:'admin',label:'Admin'}].map(r => (
-                  <button key={r.id} onClick={() => { handleRole(r.id); navigate('home'); }} style={{
-                    flex: 1, padding: '6px 4px', borderRadius: 10, border: 'none', cursor: 'pointer',
-                    background: role === r.id ? '#00C9B1' : 'rgba(255,255,255,0.08)',
-                    color: role === r.id ? '#fff' : 'rgba(255,255,255,0.45)',
-                    fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 600,
-                  }}>{r.label}</button>
-                ))}
-              </div>
-            </div>
-            <div>
               <label style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', display: 'block', marginBottom: 7, textTransform: 'uppercase', letterSpacing: 0.5 }}>Langue</label>
               <div style={{ display: 'flex', gap: 8 }}>
                 {['FR', 'دارجة'].map(l => (
@@ -514,7 +530,7 @@ function RelayApp() {
               </select>
             </div>
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 12, fontSize: 10, color: 'rgba(255,255,255,0.25)', lineHeight: 1.7 }}>
-              15 écrans interactifs. Naviguez via ce menu.
+              Modules ajoutés : authentification pour tous et gestion des utilisateurs côté admin.
             </div>
           </div>
         </div>

@@ -576,7 +576,7 @@ function ScreenInbox({ navigate, lang }) {
 }
 
 // ─── SCREEN 15: SETTINGS ──────────────────────────────────────
-function ScreenSettings({ navigate, lang, setLang }) {
+function ScreenSettings({ navigate, lang, setLang, onLogout }) {
   const isRTL = lang === 'دارجة';
   const [notifTickets, setNotifTickets] = React.useState(true);
   const [notifMentors, setNotifMentors] = React.useState(true);
@@ -650,12 +650,17 @@ function ScreenSettings({ navigate, lang, setLang }) {
         {/* Account */}
         <Section title={isRTL ? 'الحساب' : 'Compte'}>
           <Row icon="👤" label={isRTL ? 'عدل البروفيل' : 'Modifier le profil'} right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={COLORS.gray400} strokeWidth="2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>} />
-          <Row icon="🔒" label={isRTL ? 'الأمان والخصوصية' : 'Sécurité & confidentialité'} right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={COLORS.gray400} strokeWidth="2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>} />
+          <button onClick={() => navigate('auth')} style={{ width: '100%', border: 'none', background: 'none', padding: 0, textAlign: 'inherit', cursor: 'pointer' }}>
+            <Row icon="🔒" label={isRTL ? 'الأمان والخصوصية' : 'Sécurité & confidentialité'} right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={COLORS.gray400} strokeWidth="2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>} />
+          </button>
           <Row icon="📄" label={isRTL ? 'شروط الاستخدام' : "Conditions d'utilisation"} border={false} right={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={COLORS.gray400} strokeWidth="2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>} />
         </Section>
 
         {/* Logout */}
-        <button onClick={() => navigate('onboarding')} style={{
+        <button onClick={() => {
+          if (onLogout) onLogout();
+          else navigate('auth');
+        }} style={{
           width: '100%', padding: '13px', borderRadius: 12,
           border: `1.5px solid #FEE2E2`, background: '#FEF2F2',
           color: COLORS.red, fontFamily: "'Sora',sans-serif", fontSize: 14, fontWeight: 600, cursor: 'pointer',
@@ -669,7 +674,562 @@ function ScreenSettings({ navigate, lang, setLang }) {
   );
 }
 
+function ScreenAuth({ navigate, lang, role, setRole }) {
+  const isRTL = lang === 'دارجة';
+  const [mode, setMode] = React.useState('login');
+  const [selectedRole, setSelectedRole] = React.useState(role || 'student');
+  const [form, setForm] = React.useState({
+    fullName: 'Amine El Mansouri',
+    email: 'amine@inpt.ac.ma',
+    password: '',
+    confirmPassword: '',
+  });
+  const [remember, setRemember] = React.useState(true);
+
+  const roles = [
+    { id: 'student', label: isRTL ? 'طالب' : 'Étudiant' },
+    { id: 'mentor', label: isRTL ? 'منتور' : 'Mentor' },
+    { id: 'admin', label: isRTL ? 'إدارة' : 'Admin' },
+  ];
+
+  const handleSubmit = () => {
+    setRole(selectedRole);
+    if (mode === 'register' && selectedRole === 'student') {
+      navigate('onboarding');
+      return;
+    }
+    navigate('home');
+  };
+
+  return (
+    <div style={{
+      minHeight: '100%',
+      background: 'linear-gradient(180deg, #0F172A 0%, #16233B 42%, #F7F8FC 42%, #F7F8FC 100%)',
+      direction: isRTL ? 'rtl' : 'ltr',
+    }}>
+      <div style={{ padding: '24px 20px 0' }}>
+        <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 24, fontWeight: 800, color: '#fff' }}>Gateway</div>
+        <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.65)', marginTop: 8, lineHeight: 1.6 }}>
+          {isRTL ? 'ولوج آمن للطلبة والمنتورز والإدارة.' : 'Authentification sécurisée pour étudiants, mentors et administration.'}
+        </div>
+      </div>
+
+      <div style={{
+        margin: '28px 16px 0',
+        background: COLORS.white,
+        borderRadius: 24,
+        boxShadow: '0 20px 45px rgba(15,23,42,0.18)',
+        overflow: 'hidden',
+      }}>
+        <div style={{ display: 'flex', padding: 6, background: COLORS.gray100, margin: 16, borderRadius: 16 }}>
+          {[
+            { id: 'login', label: isRTL ? 'دخول' : 'Connexion' },
+            { id: 'register', label: isRTL ? 'إنشاء حساب' : 'Créer un compte' },
+          ].map(item => (
+            <button key={item.id} onClick={() => setMode(item.id)} style={{
+              flex: 1,
+              border: 'none',
+              borderRadius: 12,
+              padding: '10px 12px',
+              background: mode === item.id ? COLORS.white : 'transparent',
+              color: mode === item.id ? COLORS.primary : COLORS.gray600,
+              fontFamily: "'Sora',sans-serif",
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: mode === item.id ? '0 2px 10px rgba(27,58,107,0.08)' : 'none',
+            }}>{item.label}</button>
+          ))}
+        </div>
+
+        <div style={{ padding: '0 20px 24px' }}>
+          <div style={{ ...T.h2, fontSize: 18, marginBottom: 8 }}>
+            {mode === 'login'
+              ? (isRTL ? 'Connectez-vous à votre espace' : 'Connectez-vous à votre espace')
+              : (isRTL ? 'Créer un compte Gateway' : 'Créer un compte Gateway')}
+          </div>
+          <p style={{ ...T.body, lineHeight: 1.6, marginBottom: 18 }}>
+            {mode === 'login'
+              ? (isRTL ? 'Choisissez votre rôle puis saisissez vos identifiants.' : 'Choisissez votre rôle puis saisissez vos identifiants.')
+              : (isRTL ? 'Le parcours s’adapte selon votre profil utilisateur.' : 'Le parcours s’adapte selon votre profil utilisateur.')}
+          </p>
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            {roles.map(item => (
+              <button key={item.id} onClick={() => setSelectedRole(item.id)} style={{
+                padding: '8px 14px',
+                borderRadius: 999,
+                border: `1.5px solid ${selectedRole === item.id ? COLORS.accent : COLORS.gray200}`,
+                background: selectedRole === item.id ? COLORS.accentLight : COLORS.white,
+                color: selectedRole === item.id ? COLORS.accent : COLORS.gray600,
+                fontFamily: "'DM Sans',sans-serif",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}>{item.label}</button>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {mode === 'register' && (
+              <input
+                value={form.fullName}
+                onChange={e => setForm({ ...form, fullName: e.target.value })}
+                placeholder={isRTL ? 'الاسم الكامل' : 'Nom complet'}
+                style={{
+                  width: '100%', padding: '13px 14px', borderRadius: 14,
+                  border: `1.5px solid ${COLORS.gray200}`, outline: 'none',
+                  fontFamily: "'DM Sans',sans-serif", fontSize: 14,
+                }}
+              />
+            )}
+            <input
+              value={form.email}
+              onChange={e => setForm({ ...form, email: e.target.value })}
+              placeholder={isRTL ? 'البريد الإلكتروني INPT' : 'Email INPT'}
+              style={{
+                width: '100%', padding: '13px 14px', borderRadius: 14,
+                border: `1.5px solid ${COLORS.gray200}`, outline: 'none',
+                fontFamily: "'DM Sans',sans-serif", fontSize: 14,
+              }}
+            />
+            <input
+              type="password"
+              value={form.password}
+              onChange={e => setForm({ ...form, password: e.target.value })}
+              placeholder={isRTL ? 'كلمة المرور' : 'Mot de passe'}
+              style={{
+                width: '100%', padding: '13px 14px', borderRadius: 14,
+                border: `1.5px solid ${COLORS.gray200}`, outline: 'none',
+                fontFamily: "'DM Sans',sans-serif", fontSize: 14,
+              }}
+            />
+            {mode === 'register' && (
+              <input
+                type="password"
+                value={form.confirmPassword}
+                onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+                placeholder={isRTL ? 'تأكيد كلمة المرور' : 'Confirmer le mot de passe'}
+                style={{
+                  width: '100%', padding: '13px 14px', borderRadius: 14,
+                  border: `1.5px solid ${COLORS.gray200}`, outline: 'none',
+                  fontFamily: "'DM Sans',sans-serif", fontSize: 14,
+                }}
+              />
+            )}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14, marginBottom: 18 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+              <input type="checkbox" checked={remember} onChange={() => setRemember(v => !v)} style={{ accentColor: COLORS.accent }} />
+              <span style={{ ...T.small, fontSize: 12, color: COLORS.gray600 }}>
+                {isRTL ? 'تذكرني' : 'Se souvenir de moi'}
+              </span>
+            </label>
+            <button style={{ border: 'none', background: 'none', color: COLORS.accent, fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+              {isRTL ? 'نسيت كلمة المرور؟' : 'Mot de passe oublié ?'}
+            </button>
+          </div>
+
+          <button onClick={handleSubmit} style={{
+            width: '100%', padding: '14px 16px', borderRadius: 14,
+            border: 'none', background: COLORS.primary, color: '#fff',
+            fontFamily: "'Sora',sans-serif", fontSize: 15, fontWeight: 700,
+            cursor: 'pointer', boxShadow: '0 10px 22px rgba(27,58,107,0.22)',
+          }}>
+            {mode === 'login'
+              ? (isRTL ? 'دخول' : 'Se connecter')
+              : selectedRole === 'student'
+                ? (isRTL ? 'إتمام التسجيل' : 'Continuer l’inscription')
+                : (isRTL ? 'إنشاء الحساب' : 'Créer le compte')}
+          </button>
+
+          <div style={{ marginTop: 18, padding: '14px 16px', borderRadius: 14, background: COLORS.gray100 }}>
+            <div style={{ ...T.label, marginBottom: 8 }}>{isRTL ? 'Accès rapide' : 'Accès rapide'}</div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[
+                { id: 'student', label: isRTL ? 'Démo étudiant' : 'Démo étudiant' },
+                { id: 'mentor', label: isRTL ? 'Démo mentor' : 'Démo mentor' },
+                { id: 'admin', label: isRTL ? 'Démo admin' : 'Démo admin' },
+              ].map(item => (
+                <button key={item.id} onClick={() => { setRole(item.id); navigate('home'); }} style={{
+                  flex: 1, padding: '10px 8px', borderRadius: 12,
+                  border: `1px solid ${COLORS.gray200}`, background: COLORS.white,
+                  color: COLORS.gray900, fontFamily: "'DM Sans',sans-serif",
+                  fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                }}>{item.label}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScreenAuthLive({ navigate, lang, role, setRole, onLoginSuccess }) {
+  const isRTL = lang === 'دارجة';
+  const [mode, setMode] = React.useState('login');
+  const [selectedRole, setSelectedRole] = React.useState(role || 'student');
+  const [form, setForm] = React.useState({
+    fullName: 'Amine El Mansouri',
+    login: 'amine@inpt.ac.ma',
+    password: '',
+    confirmPassword: '',
+  });
+  const [remember, setRemember] = React.useState(true);
+  const [error, setError] = React.useState('');
+
+  const ACCOUNT_STORAGE_KEY = 'gateway_accounts';
+  const defaultAccounts = [
+    { role: 'student', fullName: 'Amine El Mansouri', login: 'amine@inpt.ac.ma', password: 'Amine2026!' },
+    { role: 'mentor', fullName: 'Yasmine Benali', login: 'yasmine@relay.ma', password: 'Mentor2026!' },
+    { role: 'admin', fullName: 'Admin INPT', login: 'admin@inpt.ac.ma', password: 'Admin2026!' },
+  ];
+
+  const readAccounts = () => {
+    try {
+      const raw = localStorage.getItem(ACCOUNT_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (_) {}
+    localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify(defaultAccounts));
+    return defaultAccounts;
+  };
+
+  const roles = [
+    { id: 'student', label: isRTL ? 'طالب' : 'Étudiant' },
+    { id: 'mentor', label: isRTL ? 'منتور' : 'Mentor' },
+    { id: 'admin', label: isRTL ? 'إدارة' : 'Admin' },
+  ];
+
+  const handleSubmit = () => {
+    setError('');
+    const accounts = readAccounts();
+
+    if (mode === 'login') {
+      const account = accounts.find(user =>
+        user.role === selectedRole &&
+        user.login.toLowerCase() === form.login.trim().toLowerCase() &&
+        user.password === form.password
+      );
+
+      if (!account) {
+        setError(isRTL ? 'Identifiants invalides.' : 'Login ou mot de passe invalide.');
+        return;
+      }
+
+      setRole(account.role);
+      if (onLoginSuccess) onLoginSuccess(account, remember);
+      navigate('home');
+      return;
+    }
+
+    if (!form.fullName.trim() || !form.login.trim() || !form.password.trim()) {
+      setError(isRTL ? 'Veuillez remplir tous les champs.' : 'Veuillez remplir tous les champs.');
+      return;
+    }
+    if (form.password !== form.confirmPassword) {
+      setError(isRTL ? 'Les mots de passe ne correspondent pas.' : 'Les mots de passe ne correspondent pas.');
+      return;
+    }
+    if (accounts.some(user => user.login.toLowerCase() === form.login.trim().toLowerCase())) {
+      setError(isRTL ? 'Ce login existe déjà.' : 'Ce login existe déjà.');
+      return;
+    }
+
+    const newAccount = {
+      role: selectedRole,
+      fullName: form.fullName.trim(),
+      login: form.login.trim(),
+      password: form.password,
+    };
+
+    localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify([...accounts, newAccount]));
+    setRole(selectedRole);
+    if (onLoginSuccess) onLoginSuccess(newAccount, remember);
+
+    if (selectedRole === 'student') {
+      navigate('onboarding');
+      return;
+    }
+
+    navigate('home');
+  };
+
+  return (
+    <div style={{
+      minHeight: '100%',
+      background: 'linear-gradient(180deg, #0F172A 0%, #16233B 42%, #F7F8FC 42%, #F7F8FC 100%)',
+      direction: isRTL ? 'rtl' : 'ltr',
+    }}>
+      <div style={{ padding: '24px 20px 0' }}>
+        <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 24, fontWeight: 800, color: '#fff' }}>Gateway</div>
+        <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.65)', marginTop: 8, lineHeight: 1.6 }}>
+          {isRTL ? 'ولوج آمن للطلبة والمنتورز والإدارة.' : 'Authentification sécurisée pour étudiants, mentors et administration.'}
+        </div>
+      </div>
+
+      <div style={{
+        margin: '28px 16px 0',
+        background: COLORS.white,
+        borderRadius: 24,
+        boxShadow: '0 20px 45px rgba(15,23,42,0.18)',
+        overflow: 'hidden',
+      }}>
+        <div style={{ display: 'flex', padding: 6, background: COLORS.gray100, margin: 16, borderRadius: 16 }}>
+          {[
+            { id: 'login', label: isRTL ? 'دخول' : 'Connexion' },
+            { id: 'register', label: isRTL ? 'إنشاء حساب' : 'Créer un compte' },
+          ].map(item => (
+            <button key={item.id} onClick={() => setMode(item.id)} style={{
+              flex: 1,
+              border: 'none',
+              borderRadius: 12,
+              padding: '10px 12px',
+              background: mode === item.id ? COLORS.white : 'transparent',
+              color: mode === item.id ? COLORS.primary : COLORS.gray600,
+              fontFamily: "'Sora',sans-serif",
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: mode === item.id ? '0 2px 10px rgba(27,58,107,0.08)' : 'none',
+            }}>{item.label}</button>
+          ))}
+        </div>
+
+        <div style={{ padding: '0 20px 24px' }}>
+          <div style={{ ...T.h2, fontSize: 18, marginBottom: 8 }}>
+            {mode === 'login' ? 'Connectez-vous à votre espace' : 'Créer un compte Gateway'}
+          </div>
+          <p style={{ ...T.body, lineHeight: 1.6, marginBottom: 18 }}>
+            {mode === 'login'
+              ? 'Choisissez votre rôle puis saisissez votre login et votre mot de passe.'
+              : 'Le parcours s’adapte selon votre profil utilisateur.'}
+          </p>
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            {roles.map(item => (
+              <button key={item.id} onClick={() => setSelectedRole(item.id)} style={{
+                padding: '8px 14px',
+                borderRadius: 999,
+                border: `1.5px solid ${selectedRole === item.id ? COLORS.accent : COLORS.gray200}`,
+                background: selectedRole === item.id ? COLORS.accentLight : COLORS.white,
+                color: selectedRole === item.id ? COLORS.accent : COLORS.gray600,
+                fontFamily: "'DM Sans',sans-serif",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}>{item.label}</button>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {mode === 'register' && (
+              <input
+                value={form.fullName}
+                onChange={e => setForm({ ...form, fullName: e.target.value })}
+                placeholder={isRTL ? 'الاسم الكامل' : 'Nom complet'}
+                style={{ width: '100%', padding: '13px 14px', borderRadius: 14, border: `1.5px solid ${COLORS.gray200}`, outline: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: 14 }}
+              />
+            )}
+            <input
+              value={form.login}
+              onChange={e => setForm({ ...form, login: e.target.value })}
+              placeholder={isRTL ? 'اللوغين أو البريد الإلكتروني' : 'Login ou email'}
+              style={{ width: '100%', padding: '13px 14px', borderRadius: 14, border: `1.5px solid ${COLORS.gray200}`, outline: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: 14 }}
+            />
+            <input
+              type="password"
+              value={form.password}
+              onChange={e => setForm({ ...form, password: e.target.value })}
+              placeholder={isRTL ? 'كلمة المرور' : 'Mot de passe'}
+              style={{ width: '100%', padding: '13px 14px', borderRadius: 14, border: `1.5px solid ${COLORS.gray200}`, outline: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: 14 }}
+            />
+            {mode === 'register' && (
+              <input
+                type="password"
+                value={form.confirmPassword}
+                onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+                placeholder={isRTL ? 'تأكيد كلمة المرور' : 'Confirmer le mot de passe'}
+                style={{ width: '100%', padding: '13px 14px', borderRadius: 14, border: `1.5px solid ${COLORS.gray200}`, outline: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: 14 }}
+              />
+            )}
+          </div>
+
+          {error && (
+            <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 12, background: '#FEF2F2', color: COLORS.red, fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600 }}>
+              {error}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14, marginBottom: 18 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+              <input type="checkbox" checked={remember} onChange={() => setRemember(v => !v)} style={{ accentColor: COLORS.accent }} />
+              <span style={{ ...T.small, fontSize: 12, color: COLORS.gray600 }}>
+                {isRTL ? 'تذكرني' : 'Se souvenir de moi'}
+              </span>
+            </label>
+            <button style={{ border: 'none', background: 'none', color: COLORS.accent, fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+              {isRTL ? 'نسيت كلمة المرور؟' : 'Mot de passe oublié ?'}
+            </button>
+          </div>
+
+          <button onClick={handleSubmit} style={{
+            width: '100%', padding: '14px 16px', borderRadius: 14,
+            border: 'none', background: COLORS.primary, color: '#fff',
+            fontFamily: "'Sora',sans-serif", fontSize: 15, fontWeight: 700,
+            cursor: 'pointer', boxShadow: '0 10px 22px rgba(27,58,107,0.22)',
+          }}>
+            {mode === 'login'
+              ? (isRTL ? 'دخول' : 'Se connecter')
+              : selectedRole === 'student'
+                ? (isRTL ? 'إتمام التسجيل' : 'Continuer l’inscription')
+                : (isRTL ? 'إنشاء الحساب' : 'Créer le compte')}
+          </button>
+
+          <div style={{ marginTop: 18, padding: '14px 16px', borderRadius: 14, background: COLORS.gray100 }}>
+            <div style={{ ...T.label, marginBottom: 8 }}>{isRTL ? 'Comptes de démonstration' : 'Comptes de démonstration'}</div>
+            <div style={{ ...T.small, fontSize: 11, lineHeight: 1.7, color: COLORS.gray600 }}>
+              `amine@inpt.ac.ma` / `Amine2026!`
+            </div>
+            <div style={{ ...T.small, fontSize: 11, lineHeight: 1.7, color: COLORS.gray600 }}>
+              `yasmine@relay.ma` / `Mentor2026!`
+            </div>
+            <div style={{ ...T.small, fontSize: 11, lineHeight: 1.7, color: COLORS.gray600 }}>
+              `admin@inpt.ac.ma` / `Admin2026!`
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScreenUserManagement({ lang }) {
+  const isRTL = lang === 'دارجة';
+  const [search, setSearch] = React.useState('');
+  const [filter, setFilter] = React.useState('Tous');
+  const [users, setUsers] = React.useState([
+    { id: 1, name: 'Amine El Mansouri', role: 'Étudiant', cycle: 'Ingénierie logicielle avancée pour les services numériques', status: 'Actif', lastSeen: 'Il y a 5 min' },
+    { id: 2, name: 'Sara Ouali', role: 'Étudiant', cycle: 'Cybersécurité et Confiance Numérique', status: 'En attente', lastSeen: 'Aujourd’hui' },
+    { id: 3, name: 'Yasmine Benali', role: 'Mentor', cycle: 'Google · Alumni INPT', status: 'Actif', lastSeen: 'En ligne' },
+    { id: 4, name: 'Admin Résidence', role: 'Admin', cycle: 'Service vie étudiante', status: 'Suspendu', lastSeen: 'Hier' },
+    { id: 5, name: 'Mehdi Lahlou', role: 'Mentor', cycle: 'Cloud & Entrepreneuriat', status: 'Actif', lastSeen: 'Il y a 2h' },
+  ]);
+
+  const filters = ['Tous', 'Étudiant', 'Mentor', 'Admin'];
+  const filteredUsers = users.filter(user =>
+    (filter === 'Tous' || user.role === filter) &&
+    (user.name.toLowerCase().includes(search.toLowerCase()) || user.cycle.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  const setStatus = (id, nextStatus) => {
+    setUsers(list => list.map(user => user.id === id ? { ...user, status: nextStatus } : user));
+  };
+
+  const statusStyle = {
+    'Actif': { color: COLORS.green, bg: '#DCFCE7' },
+    'En attente': { color: COLORS.yellow, bg: '#FEF3C7' },
+    'Suspendu': { color: COLORS.red, bg: '#FEE2E2' },
+  };
+
+  return (
+    <div style={{ background: COLORS.bg, minHeight: '100%', paddingBottom: 90, direction: isRTL ? 'rtl' : 'ltr' }}>
+      <div style={{ background: COLORS.primary, padding: '18px 20px 22px' }}>
+        <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 18, fontWeight: 800, color: '#fff' }}>
+          {isRTL ? 'Gestion des utilisateurs' : 'Gestion des utilisateurs'}
+        </div>
+        <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.65)', marginTop: 6 }}>
+          {isRTL ? 'Pilotage des comptes étudiants, mentors et administrateurs.' : 'Pilotage des comptes étudiants, mentors et administrateurs.'}
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+          {[
+            { label: isRTL ? 'Total' : 'Total', value: users.length },
+            { label: isRTL ? 'Actifs' : 'Actifs', value: users.filter(u => u.status === 'Actif').length },
+            { label: isRTL ? 'En attente' : 'En attente', value: users.filter(u => u.status === 'En attente').length },
+          ].map(item => (
+            <div key={item.label} style={{ flex: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: '12px 10px', textAlign: 'center' }}>
+              <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, color: '#fff' }}>{item.value}</div>
+              <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ padding: '16px 20px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: COLORS.white, borderRadius: 14, padding: '10px 12px', boxShadow: '0 2px 8px rgba(27,58,107,0.06)' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={COLORS.gray400} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder={isRTL ? 'Rechercher un utilisateur...' : 'Rechercher un utilisateur...'}
+            style={{ flex: 1, border: 'none', outline: 'none', background: 'none', fontFamily: "'DM Sans',sans-serif", fontSize: 14, color: COLORS.gray900 }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', marginTop: 12, paddingBottom: 2 }}>
+          {filters.map(item => (
+            <button key={item} onClick={() => setFilter(item)} style={{
+              padding: '7px 14px', borderRadius: 999,
+              border: `1.5px solid ${filter === item ? COLORS.accent : COLORS.gray200}`,
+              background: filter === item ? COLORS.accentLight : COLORS.white,
+              color: filter === item ? COLORS.accent : COLORS.gray600,
+              fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600,
+              cursor: 'pointer', whiteSpace: 'nowrap',
+            }}>{item}</button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {filteredUsers.map(user => {
+          const badge = statusStyle[user.status] || statusStyle['En attente'];
+          return (
+            <div key={user.id} style={{ background: COLORS.white, borderRadius: 18, padding: 16, boxShadow: '0 2px 8px rgba(27,58,107,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <Avatar name={user.name} size={46} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+                    <div style={{ ...T.h3, fontSize: 14 }}>{user.name}</div>
+                    <span style={{
+                      padding: '4px 10px', borderRadius: 999, background: badge.bg, color: badge.color,
+                      fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap',
+                    }}>{user.status}</span>
+                  </div>
+                  <div style={{ ...T.body, fontSize: 12, marginTop: 4, lineHeight: 1.5 }}>{user.role} · {user.cycle}</div>
+                  <div style={{ ...T.small, fontSize: 11, marginTop: 6 }}>{isRTL ? 'Dernière activité' : 'Dernière activité'} : {user.lastSeen}</div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+                <button onClick={() => setStatus(user.id, 'Actif')} style={{
+                  flex: 1, padding: '9px 10px', borderRadius: 12, border: 'none',
+                  background: '#DCFCE7', color: COLORS.green, fontFamily: "'DM Sans',sans-serif",
+                  fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                }}>{isRTL ? 'Activer' : 'Activer'}</button>
+                <button onClick={() => setStatus(user.id, 'En attente')} style={{
+                  flex: 1, padding: '9px 10px', borderRadius: 12, border: 'none',
+                  background: '#FEF3C7', color: '#B45309', fontFamily: "'DM Sans',sans-serif",
+                  fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                }}>{isRTL ? 'Réviser' : 'Réviser'}</button>
+                <button onClick={() => setStatus(user.id, 'Suspendu')} style={{
+                  flex: 1, padding: '9px 10px', borderRadius: 12, border: 'none',
+                  background: '#FEE2E2', color: COLORS.red, fontFamily: "'DM Sans',sans-serif",
+                  fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                }}>{isRTL ? 'Suspendre' : 'Suspendre'}</button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 Object.assign(window, {
   ScreenMatching, ScreenSubmitSuccess, ScreenTicketDetail,
   ScreenCommunity, ScreenNotifications, ScreenInbox, ScreenSettings,
+  ScreenAuth, ScreenAuthLive, ScreenUserManagement,
 });
