@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Relay — Export Gallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #0E1320;
+    font-family: 'DM Sans', sans-serif;
+    padding: 32px 24px 64px;
+  }
+  ::-webkit-scrollbar { width:6px; } 
+  ::-webkit-scrollbar-track { background: #1a2035; }
+  ::-webkit-scrollbar-thumb { background: #2d3d5a; border-radius: 3px; }
+  input,button,select,textarea { font-family:inherit; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .phone-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .phone-label {
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+  .phone-frame {
+    width: 280px;
+    height: 590px;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+    background: #F7F8FC;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .dynamic-island {
+    position: absolute;
+    top: 8px; left: 50%; transform: translateX(-50%);
+    width: 88px; height: 26px; border-radius: 16px;
+    background: #000; z-index: 200; pointer-events: none;
+  }
+  .status-bar {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 18px 0; pointer-events: none;
+    font-family: -apple-system, system-ui; font-weight: 600; font-size: 11px;
+  }
+  .status-icons { display: flex; gap: 4px; align-items: center; }
+  .home-indicator {
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 300;
+    height: 6px; display: flex; justify-content: center; align-items: flex-end;
+    padding-bottom: 4px; pointer-events: none;
+  }
+  .screen-scroll {
+    height: 100%; overflow: hidden; padding-top: 38px; position: relative;
+  }
+  .dl-btn {
+    padding: 7px 16px; border-radius: 12px;
+    background: rgba(0,201,177,0.15); border: 1.5px solid rgba(0,201,177,0.4);
+    color: #00C9B1; font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    width: 100%;
+  }
+  .dl-btn:hover { background: rgba(0,201,177,0.25); }
+  .dl-btn.done { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); color: #22C55E; }
+
+  /* Header */
+  .header {
+    max-width: 1400px; margin: 0 auto 36px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .dl-all-btn {
+    padding: 10px 22px; border-radius: 12px;
+    background: #00C9B1; border: none;
+    color: #fff; font-family: 'Sora', sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<script type="text/babel" src="relay-components.jsx"></script>
+<script type="text/babel" src="relay-screens.jsx"></script>
+<script type="text/babel" src="relay-screens-2.jsx"></script>
+
+<div id="root"></div>
+
+<script type="text/babel">
+
+const noop = () => {};
+const LANG = 'FR';
+
+const SCREENS = [
+  { id: 'onboarding',    label: '01 — Onboarding',       bg: false },
+  { id: 'matching',      label: '02 — AI Matching',       bg: true  },
+  { id: 'home',          label: '03 — Accueil',           bg: false },
+  { id: 'notifications', label: '04 — Notifications',     bg: false },
+  { id: 'community',     label: '05 — Campus Feed',       bg: false },
+  { id: 'submit',        label: '06 — Soumettre',         bg: false },
+  { id: 'submitSuccess', label: '07 — Confirmation',      bg: false },
+  { id: 'tickets',       label: '08 — Mes Tickets',       bg: false },
+  { id: 'ticketDetail',  label: '09 — Ticket Détail',     bg: false },
+  { id: 'mentors',       label: '10 — Mentors',           bg: false },
+  { id: 'mentorProfile', label: '11 — Profil Mentor',     bg: false },
+  { id: 'inbox',         label: '12 — Messagerie',        bg: false },
+  { id: 'chat',          label: '13 — Conversation',      bg: false },
+  { id: 'profile',       label: '14 — Mon Profil',        bg: false },
+  { id: 'settings',      label: '15 — Paramètres',        bg: false },
+];
+
+function renderScreen(id) {
+  const p = { navigate: noop, lang: LANG, setLang: noop, tab: 'home', setTab: noop };
+  switch (id) {
+    case 'onboarding':    return <ScreenOnboarding    {...p} />;
+    case 'matching':      return <ScreenMatching       {...p} />;
+    case 'home':          return <ScreenHome           {...p} />;
+    case 'notifications': return <ScreenNotifications  {...p} />;
+    case 'community':     return <ScreenCommunity      {...p} />;
+    case 'submit':        return <ScreenSubmit         {...p} />;
+    case 'submitSuccess': return <ScreenSubmitSuccess  {...p} />;
+    case 'tickets':       return <ScreenTickets        {...p} />;
+    case 'ticketDetail':  return <ScreenTicketDetail   {...p} />;
+    case 'mentors':       return <ScreenMentors        {...p} />;
+    case 'mentorProfile': return <ScreenMentorProfile  {...p} />;
+    case 'inbox':         return <ScreenInbox          {...p} />;
+    case 'chat':          return <ScreenChat           {...p} />;
+    case 'profile':       return <ScreenProfile        {...p} />;
+    case 'settings':      return <ScreenSettings       {...p} />;
+    default:              return null;
+  }
+}
+
+function StatusBar({ dark }) {
+  const c = dark ? '#fff' : '#1A1D2E';
+  return (
+    <div className="status-bar" style={{ color: c }}>
+      <span style={{ paddingTop: 2, fontSize: 11 }}>9:41</span>
+      <div className="status-icons">
+        <svg width="13" height="10" viewBox="0 0 19 12"><rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill={c}/><rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill={c}/><rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill={c}/><rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill={c}/></svg>
+        <svg width="13" height="10" viewBox="0 0 17 12"><path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill={c}/><circle cx="8.5" cy="10.5" r="1.5" fill={c}/></svg>
+        <svg width="20" height="10" viewBox="0 0 27 13"><rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke={c} strokeOpacity="0.35" fill="none"/><rect x="2" y="2" width="20" height="9" rx="2" fill={c}/></svg>
+      </div>
+    </div>
+  );
+}
+
+function PhoneCard({ screen }) {
+  const [status, setStatus] = React.useState('idle'); // idle | loading | done
+  const ref = React.useRef();
+
+  const download = async () => {
+    setStatus('loading');
+    try {
+      const dataUrl = await htmlToImage.toPng(ref.current, { pixelRatio: 2, cacheBust: true });
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `Relay-${screen.label.replace(/\s—\s/, '-').replace(/\s/g, '-')}.png`;
+      a.click();
+      setStatus('done');
+      setTimeout(() => setStatus('idle'), 2500);
+    } catch (e) {
+      console.error(e);
+      setStatus('idle');
+    }
+  };
+
+  const isDark = screen.bg;
+
+  return (
+    <div className="phone-card">
+      <div className="phone-label">{screen.label}</div>
+      <div ref={ref} className="phone-frame">
+        <div className="dynamic-island"/>
+        <StatusBar dark={isDark} />
+        <div className="screen-scroll">
+          {renderScreen(screen.id)}
+        </div>
+        <div className="home-indicator">
+          <div style={{ width: 100, height: 4, borderRadius: 100, background: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.2)' }}/>
+        </div>
+      </div>
+      <button
+        className={`dl-btn${status === 'done' ? ' done' : ''}`}
+        onClick={download}
+        disabled={status === 'loading'}
+      >
+        {status === 'loading' ? '⏳ Export...' : status === 'done' ? '✓ Téléchargé !' : '⬇ Télécharger PNG'}
+      </button>
+    </div>
+  );
+}
+
+function DownloadAll() {
+  const [status, setStatus] = React.useState('idle');
+
+  const downloadAll = async () => {
+    setStatus('loading');
+    const frames = document.querySelectorAll('.phone-frame');
+    for (let i = 0; i < frames.length; i++) {
+      const screen = SCREENS[i];
+      try {
+        const dataUrl = await htmlToImage.toPng(frames[i], { pixelRatio: 2, cacheBust: true });
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = `Relay-${screen.label.replace(/\s—\s/, '-').replace(/\s/g, '-')}.png`;
+        a.click();
+        await new Promise(r => setTimeout(r, 300));
+      } catch(e) { console.error(e); }
+    }
+    setStatus('done');
+    setTimeout(() => setStatus('idle'), 3000);
+  };
+
+  return (
+    <button className="dl-all-btn" onClick={downloadAll} disabled={status === 'loading'} style={{ opacity: status === 'loading' ? 0.7 : 1 }}>
+      {status === 'loading' ? '⏳ Export en cours...' : status === 'done' ? '✅ Tous téléchargés !' : '⬇ Tout télécharger (15 PNG)'}
+    </button>
+  );
+}
+
+function Gallery() {
+  return (
+    <div>
+      <div className="header">
+        <div>
+          <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 24, fontWeight: 800, color: '#fff' }}>Relay</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>
+            15 écrans · Export PNG · INPT 2026
+          </div>
+        </div>
+        <DownloadAll />
+      </div>
+      <div className="grid">
+        {SCREENS.map(s => <PhoneCard key={s.id} screen={s} />)}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Gallery />);
+</script>
+</body>
+</html>
