@@ -1,5 +1,5 @@
 
-// relay-screens.jsx — All screens for Relay app
+// relay-screens.jsx — All screens for Gateway app
 
 const MENTORS_DATA = [
   { name: 'Yasmine Benali', role: 'Ingénieure IA', company: 'Google', tags: ['IA/ML', 'Python', 'NLP'], score: 92, available: true, bio: "Ingénieure senior chez Google Brain, spécialisée en NLP et vision. Ancienne élève INPT promo 2018.", sector: 'Professionnels', slots: ['Lun 18h', 'Mer 19h', 'Sam 10h'] },
@@ -34,12 +34,12 @@ function ScreenOnboarding({ navigate, lang, setLang, role, setRole }) {
     return (
       <div style={{ minHeight: '100%', background: COLORS.bg, padding: '0 0 24px' }}>
         <div style={{ padding: '20px 20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, color: COLORS.primary }}>Relay</span>
+          <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 22, fontWeight: 800, color: COLORS.primary }}>Gateway</span>
           <LangToggle lang={lang} setLang={setLang} />
         </div>
         <div style={{ padding: '28px 20px 0' }}>
           <div style={{ ...T.h1, fontSize: 22, lineHeight: 1.3, marginBottom: 8 }}>
-            {isRTL ? 'أهلاً بك في Relay' : 'Bienvenue sur Relay.'}<br/>
+            {isRTL ? 'أهلاً بك في Gateway' : 'Bienvenue sur Gateway.'}<br/>
             <span style={{ color: COLORS.accent }}>{isRTL ? 'من أنت؟' : 'Qui êtes-vous ?'}</span>
           </div>
           <p style={{ ...T.body, lineHeight: 1.6, marginBottom: 28 }}>
@@ -80,12 +80,12 @@ function ScreenOnboarding({ navigate, lang, setLang, role, setRole }) {
         <button onClick={() => setStep(0)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={COLORS.primary} strokeWidth="2.5" strokeLinecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
         </button>
-        <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 20, fontWeight: 800, color: COLORS.primary }}>Relay</span>
+        <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 20, fontWeight: 800, color: COLORS.primary }}>Gateway</span>
         <LangToggle lang={lang} setLang={setLang} />
       </div>
       <div style={{ padding: '24px 20px 0' }}>
         <div style={{ ...T.h1, fontSize: 22, lineHeight: 1.3, marginBottom: 8 }}>
-          {isRTL ? 'مرحباً بك في Relay' : 'Bienvenue sur Relay.'}<br/>
+          {isRTL ? 'مرحباً بك في Gateway' : 'Bienvenue sur Gateway.'}<br/>
           <span style={{ color: COLORS.accent }}>{isRTL ? 'هيا نتحدث عنك.' : 'Parlons de toi.'}</span>
         </div>
         <p style={{ ...T.body, lineHeight: 1.6, marginBottom: 20 }}>
@@ -163,7 +163,7 @@ function ScreenHomeStudent({ navigate, tab, setTab, lang, setLang }) {
   return (
     <div style={{ background: COLORS.bg, minHeight: '100%', paddingBottom: 80, direction: isRTL ? 'rtl' : 'ltr' }}>
       <div style={{ padding: '16px 20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 20, fontWeight: 800, color: COLORS.primary }}>Relay</span>
+        <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 20, fontWeight: 800, color: COLORS.primary }}>Gateway</span>
         <LangToggle lang={lang} setLang={setLang} />
       </div>
       <div style={{ padding: '20px 20px 0' }}>
@@ -236,7 +236,7 @@ function ScreenHomeAdmin({ navigate, lang, setLang }) {
     <div style={{ background: COLORS.bg, minHeight: '100%', paddingBottom: 80 }}>
       <div style={{ background: COLORS.primary, padding: '18px 20px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-          <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 18, fontWeight: 800, color: '#fff' }}>Relay Admin</span>
+          <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 18, fontWeight: 800, color: '#fff' }}>Gateway Admin</span>
           <LangToggle lang={lang} setLang={setLang} />
         </div>
         <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>
@@ -316,7 +316,7 @@ function ScreenHomeMentor({ navigate, lang, setLang }) {
     <div style={{ background: COLORS.bg, minHeight: '100%', paddingBottom: 80 }}>
       <div style={{ padding: '18px 20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 18, fontWeight: 800, color: COLORS.primary }}>Relay</span>
+          <span style={{ fontFamily: "'Sora',sans-serif", fontSize: 18, fontWeight: 800, color: COLORS.primary }}>Gateway</span>
           <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, color: COLORS.gray400, marginTop: 1 }}>
             {isRTL ? 'لوحة المنتور' : 'Espace Mentor'}
           </div>
